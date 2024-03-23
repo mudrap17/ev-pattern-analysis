@@ -1,0 +1,50 @@
+use role accountadmin;
+
+CREATE STORAGE INTEGRATION S3_Snowflake 
+ TYPE = EXTERNAL_STAGE 
+ STORAGE_PROVIDER = S3
+ ENABLED = TRUE 
+ STORAGE_AWS_ROLE_ARN = 'arn:aws:iam::<number>:role/mysnowflake'
+ STORAGE_ALLOWED_LOCATIONS = ('s3://<bucket>/')
+
+desc INTEGRATION S3_Snowflake;    
+
+create database ev_database;
+
+create schema ev_schema; 
+
+use schema ev_schema;
+
+CREATE FILE FORMAT s3_file_format
+  TYPE = 'PARQUET'
+
+use role accountadmin;
+
+CREATE STAGE S3_stage
+  STORAGE_INTEGRATION = S3_Snowflake
+  URL = 's3://ev-api-data-cleaned/<filename>.snappy.parquet'
+  FILE_FORMAT = s3_file_format;
+
+SELECT *
+  FROM TABLE(
+    INFER_SCHEMA(
+      LOCATION=>'@S3_stage'
+      , FILE_FORMAT=>'s3_file_format'
+      )
+    );
+
+CREATE TABLE ev_table
+  USING TEMPLATE (
+    SELECT ARRAY_AGG(OBJECT_CONSTRUCT(*))
+      FROM TABLE(
+        INFER_SCHEMA(
+          LOCATION=>'@S3_stage',
+          FILE_FORMAT=>'s3_file_format'
+        )
+      ));
+
+COPY INTO ev_table from @S3_stage
+  file_format = 's3_file_format'
+  MATCH_BY_COLUMN_NAME=CASE_INSENSITIVE;
+
+SELECT * FROM ev_table;
