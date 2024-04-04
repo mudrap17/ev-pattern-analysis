@@ -26,7 +26,7 @@ def fetch_data_and_upload_to_s3(city):
     coordinates = get_city_bounding_box(city)
     bounding_box = ','.join([f'({float(coordinates[i])},{float(coordinates[i+1])})' for i in range(0, len(coordinates), 2)])
     # Make API request to fetch data
-    response = requests.get(f'https://api.openchargemap.io/v3/poi/?output=json&countrycode=US&boundingbox={bounding_box}&maxresults=100&key=1470325c-1ed9-4f43-b32b-e0cb00eaab47&operationalstatus={city}')
+    response = requests.get(f'https://api.openchargemap.io/v3/poi/?output=json&countrycode=US&boundingbox={bounding_box}&maxresults=100&key=yourapikey&operationalstatus={city}')
     print(response)
     data = response.json()
     print(data)
