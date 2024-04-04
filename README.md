@@ -6,7 +6,8 @@ Analyse the EV charging infrastructure to identify any patterns and make suggest
 https://openchargemap.org/site/develop/api#/schemas/ConnectionInfo
 
 ## Data Architecture
-![image](https://github.com/mudrap17/ev-pattern-analysis/assets/76879120/d34d9857-e825-44ab-9918-cc9767dffd5e)
+![image](https://github.com/mudrap17/ev-pattern-analysis/assets/76879120/4e7a0d89-851e-4152-9d72-8ada3c911014)
+
 
 Clarification: I have only used Free Tier services in both AWS and Snowflake.
 
